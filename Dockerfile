@@ -3,7 +3,7 @@
 #   python -m src.train && python -m src.compare_runs
 #   docker build -t heart-risk-assistant .
 #   docker run -p 8501:8501 --env-file .env heart-risk-assistant
-FROM python:3.13-slim
+FROM python:3.14-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
@@ -20,6 +20,7 @@ RUN pip install -r requirements.txt
 COPY configs/ configs/
 COPY src/ src/
 COPY models/ models/
+ENV PYTHONPATH=/app
 
 # Run as a non-root user
 RUN useradd --create-home appuser && chown -R appuser /app
