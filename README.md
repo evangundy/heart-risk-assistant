@@ -4,6 +4,9 @@ An end-to-end ML application that estimates a patient's probability of heart dis
 
 > **Not a medical device.** Educational and portfolio project. Predictions are statistical estimates from historical data, not diagnoses.
 
+**▶ [Watch the demo (3:25)](https://drive.google.com/file/d/1tHO0-hVRRM28wJl_VVArGQZkNNJ2-a1Z/view?usp=sharing)**: silent screen recording.
+`0:00` test suite · `0:18` full prediction with explanation · `0:48` raw LLM extraction · `1:00` what-if question · `1:36` edge case: missing values → clarifying question · `1:54` multi-turn completion → prediction · `3:06` edge case: out-of-scope question declined
+
 ---
 
 ## 1. Project description
