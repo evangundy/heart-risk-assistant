@@ -1,0 +1,63 @@
+# ---------------------------------------------------------------------------
+# Heart Risk Assistant - training configuration
+# Every hyperparameter used by src/train.py comes from this file.
+# ---------------------------------------------------------------------------
+
+data:
+  path: data/heart.csv
+  description: "Kaggle Heart Failure Prediction (fedesoriano, 2021): 918 patients, 11 clinical features, combined from 5 UCI heart disease cohorts"
+  target: HeartDisease
+  test_size: 0.2
+  random_state: 42
+  # Physiologically impossible zeros that the source data uses to mean "not recorded".
+  # They are converted to NaN and imputed inside the model pipeline (fit on train only).
+  zero_as_missing: [RestingBP, Cholesterol]
+
+features:
+  numeric: [Age, RestingBP, Cholesterol, MaxHR, Oldpeak]
+  binary: [FastingBS]
+  categorical: [Sex, ChestPainType, RestingECG, ExerciseAngina, ST_Slope]
+
+mlflow:
+  tracking_uri: sqlite:///mlflow.db   # relative paths resolve to the project root
+  experiment_name: heart-disease-risk
+
+training:
+  cv_folds: 5               # stratified CV AUC is logged alongside the test-set metrics
+  decision_threshold: 0.5
+
+# Selection rule used by src/compare_runs.py
+selection:
+  primary_metric: test_roc_auc   # ranking quality across all thresholds
+  min_recall: 0.85               # screening tool: a model that misses >15% of cases is disqualified
+  output_dir: models
+
+# Each entry becomes one MLflow run. Add or edit entries to run new experiments.
+experiments:
+  - name: logreg_baseline
+    model: logistic_regression
+    params: {C: 1.0, max_iter: 1000, class_weight: null}
+
+  - name: logreg_strong_reg_balanced
+    model: logistic_regression
+    params: {C: 0.1, max_iter: 1000, class_weight: balanced}
+
+  - name: random_forest_default
+    model: random_forest
+    params: {n_estimators: 200, max_depth: null, min_samples_leaf: 1, max_features: sqrt, class_weight: null}
+
+  - name: random_forest_regularized
+    model: random_forest
+    params: {n_estimators: 500, max_depth: 6, min_samples_leaf: 4, max_features: sqrt, class_weight: balanced}
+
+  - name: gradient_boosting
+    model: gradient_boosting
+    params: {n_estimators: 200, learning_rate: 0.05, max_depth: 3, subsample: 0.8}
+
+  - name: xgboost_shallow
+    model: xgboost
+    params: {n_estimators: 300, learning_rate: 0.05, max_depth: 3, subsample: 0.8, colsample_bytree: 0.8, reg_lambda: 1.0}
+
+  - name: xgboost_deep
+    model: xgboost
+    params: {n_estimators: 150, learning_rate: 0.1, max_depth: 6, subsample: 1.0, colsample_bytree: 1.0, reg_lambda: 0.0}

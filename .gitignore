@@ -1,0 +1,24 @@
+# Secrets
+.env
+
+# Data and model artifacts (not committed; see README "Get the data")
+data/*
+!data/.gitkeep
+models/
+mlruns/
+mlartifacts/
+mlflow.db
+reports/*.png
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ipynb_checkpoints/
+.venv/
+venv/
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
